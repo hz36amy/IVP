@@ -19,7 +19,7 @@ d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(dat
 
 //stacked bar chart
 
-data = d3.csv("https://static.observableusercontent.com/files/cacf3b872e296fd3cf25b9b8762dc0c3aa1863857ecba3f23e8da269c584a4cea9db2b5d390b103c7b386586a1104ce33e17eee81b5cc04ee86929f1ee599bfe?response-content-disposition=attachment%3Bfilename*%3DUTF-8%27%27us-population-state-age.csv").then(d => chart(d))
+data = d3.csv("data/us-population-state-age.csv").then(d => chart(d))
 
 function chart(csv) {
     margin = ({top: 10, right: 10, bottom: 20, left: 40})
