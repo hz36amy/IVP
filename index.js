@@ -18,8 +18,8 @@ d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(dat
         })
 
 //stacked bar chart
-
-data = d3.csv("data/us-population-state-age.csv").then(d => chart(d))
+//data manipulation
+data = d3.csv("data/PRSA_Data_20130301-20170228/PRSA_Data_Aotizhongxin_20130301-20170228.csv").then(d => chart(d))
 
 function chart(csv) {
     margin = ({top: 10, right: 10, bottom: 20, left: 40})
