@@ -8,8 +8,9 @@ var mapSVG = d3.select("#map")
 var projection = d3.geoMercator().center([116, 39]).scale(10000).translate([width/3, height/1.5]);
 var path = d3.geoPath().projection(projection)
 
+var group = mapSVG.append("g")
 d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(data => {
-        mapSVG.selectAll("path")
+        group.selectAll("path")
             .data(data.features)
             .enter()
             .append("path")
@@ -17,26 +18,76 @@ d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(dat
             .attr("d", path)
         })
 
+var peking = [116.3, 39.9];  
+var proPeking = projection(peking);  
+group.append("circle")  
+    .attr("class","point")  
+    .attr("cx",proPeking[0])  
+    .attr("cy",proPeking[1])
+    .attr("fill", "red") 
+    .attr("r",8)
+    .join("g")
+
+
+
+
 //stacked bar chart
-//data manipulation
+
 data = d3.csv("data/PRSA_Data_20130301-20170228/PRSA_Data_Aotizhongxin_20130301-20170228.csv").then(d => chart(d))
 
 function chart(csv) {
+
+  var new_csv = []
+  new_csv.columns = ["month","PM2.5","PM10","SO2","NO2","CO","O3"]
+
+  // console.log(new_csv)
+  // console.log(csv)
+  for (var i=1;i<=12;i++)
+  { 
+    month_data = csv.filter(function(row) {
+      return row['month'] == i;
+    })
+    
+    var PM2_5 = []
+    month_data.forEach(element => PM2_5.push(parseFloat(element["PM2.5"])))
+
+    var PM10 = []
+    month_data.forEach(element => PM10.push(parseFloat(element.PM10)))
+
+    var SO2 = []
+    month_data.forEach(element => SO2.push(parseFloat(element.SO2)))
+
+    var NO2 = []
+    month_data.forEach(element => NO2.push(parseFloat(element.NO2)))
+
+    var CO = []
+    month_data.forEach(element => CO.push(parseFloat(element.CO)))
+    
+    var O3 = []
+    month_data.forEach(element => O3.push(parseFloat(element.O3)))
+
+    var obj = {month: i, "PM2.5": d3.mean(PM2_5), PM10: d3.mean(PM10), SO2: d3.mean(SO2), NO2: d3.mean(NO2), CO: d3.mean(CO), O3: d3.mean(O3)}
+    new_csv.push(obj)
+    //console.log(d3.mean(PM2_5))
+  }
+
     margin = ({top: 10, right: 10, bottom: 20, left: 40})
     height = 600
     formatValue = x => isNaN(x) ? "N/A" : x.toLocaleString("en")
+
     yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(y).ticks(null, "s"))
     .call(g => g.selectAll(".domain").remove())
+
     xAxis = g => g
     .attr("transform", `translate(0,${height - margin.bottom})`)
     .call(d3.axisBottom(x).tickSizeOuter(0))
     .call(g => g.selectAll(".domain").remove())
 
     series = d3.stack()
-    .keys(csv.columns.slice(1))
-  (csv)
+    .keys(new_csv.columns.slice(1))
+  (new_csv)
     .map(d => (d.forEach(v => v.key = d.key), d))
 
     color = d3.scaleOrdinal()
@@ -49,7 +100,7 @@ function chart(csv) {
     .rangeRound([height - margin.bottom, margin.top])
 
     x = d3.scaleBand()
-    .domain(csv.map(d => d.name))
+    .domain(new_csv.map(d => d.month))
     .range([margin.left, width - margin.right])
     .padding(0.1)
 
@@ -65,7 +116,7 @@ function chart(csv) {
     .selectAll("rect")
     .data(d => d)
     .join("rect")
-      .attr("x", (d, i) => x(d.data.name))
+      .attr("x", (d, i) => x(d.data.month))
       .attr("y", d => y(d[1]))
       .attr("height", d => y(d[0]) - y(d[1]))
       .attr("width", x.bandwidth())
