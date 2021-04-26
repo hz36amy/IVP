@@ -1,46 +1,89 @@
-//map
-var width = 800;
-var height = 800;
 
-var mapSVG = d3.select("#map")
-    .append("svg")
-    .attr("width",width)
-    .attr("height",height);
+// Map visualization
+map = d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(d => drawMap(d));
 
-var projection = d3.geoMercator().center([116, 39]).scale(10000).translate([width/3, height/1.5]);
-var path = d3.geoPath().projection(projection)
+var coordinates = {
+  "Aotizhongxin": [116.400194,39.99232],
+  "Changping": [116.225739,40.229698],
+  "Dingling": [116.232569,40.300468],
+  "Dongsi": [117.128967,40.139887],
+  "Guanyuan": [116.368796,39.938247],
+  "Gucheng": [116.191233,39.917884],
+  "Huairou": [116.635511,40.324818],
+  "Nongzhanguan": [116.468772,39.946988],
+  "Shunyi": [116.658552,40.137235],
+  "Tiantan": [116.419342,39.888663],
+  "Wanliu": [116.302908,39.977845],
+  "Wanshouxigong": [116.37434,39.885845]
+}
 
-var group = mapSVG.append("g")
+var params = {};
+var chosen = {
+  cluster: null,
+  site: null
+};
+params.chosen = chosen;
 
-var peking = [116.3, 39.9];  
-var proPeking = projection(peking);  
+function drawMap(data) {
+  var width = 800,
+      height = 800;
 
-d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(data => {
-        group.selectAll("path")
-            .data(data.features)
-            .enter()
-            .append("path")
-            .attr("fill", "#ddd")
-            .attr("d", path)
+  var mapSVG = d3.select("#map")
+      .append("svg")
+      .attr("width",width)
+      .attr("height",height);
 
-            group.append("circle")  
-            .attr("class","point")  
-            .attr("cx",proPeking[0])  
-            .attr("cy",proPeking[1])
-            .attr("fill", "red") 
-            .attr("fill-opacity", 0.4)
-            .attr("r",8)
-        })
+  var projection = d3.geoMercator().center([116, 39]).scale(10000).translate([width/3, height/1.5]);
+  var path = d3.geoPath().projection(projection)
 
+  var group = mapSVG.append("g")
 
+  group.selectAll("path")
+        .data(data.features)
+        .enter()
+        .append("path")
+        .attr("fill", "#ddd")
+        .attr("d", path)
 
-//stacked bar chart
-//choose site
-data = d3.csv("data/PRSA_Data_20130301-20170228/PRSA_Data_Aotizhongxin_20130301-20170228.csv").then(d => drawBars(d));
+  var names = Object.keys(coordinates)
+  
+  for(var i=0; i<names.length; i++) {
+    var name = names[i];
+    //console.log(coordinates[names[i]]);
+    var proj = projection(coordinates[names[i]]);
+
+    group.append("circle")  
+        .attr("class", name)  
+        .attr("cx",proj[0])  
+        .attr("cy",proj[1])
+        .attr("fill", "red") 
+        .attr("fill-opacity", 0.4)
+        .attr("r",8)
+        .append("title")
+        .text(name)
+  }
+
+  group.selectAll("circle")
+       .on("mouseover",function(){
+        d3.select(this).attr("fill","orange");})
+       .on("mouseout",function(){
+        d3.select(this).attr("fill","red");})
+       .on('click', function(d, i){
+          var site_name = d3.select(this).attr("class");
+          chosen.site = chosen.site === site_name ? null : site_name;
+          params.chosen = chosen;
+          initialize(params);
+       })
+
+}
+
+// Stacked bar chart
+
+data = d3.csv("data/PRSA_Data_20130301-20170228/data.csv").then(d => drawBars(d));
 
 function drawBars(csv) {
   var input = {'data': csv, 'width': 500, 'height': 300};
-  var margin = {top: 10, right: 60, bottom: 20, left: 40},
+  var margin = {top: 40, right: 60, bottom: 40, left: 80},
   width = input.width + margin.left + margin.right,
   height = input.height + margin.top + margin.bottom;
 
@@ -50,13 +93,20 @@ function drawBars(csv) {
 
   var canvas = {svg: svg, margin: margin, width: width, height: height};
 
-  var params = {'input': input, 'canvas': canvas};
+  //var params = {'input': input, 'canvas': canvas};
+  params.input = input;
+  params.canvas = canvas;
+
   initialize(params);
   update(params);
 
 }
 
 function initialize(params) {
+  d3.select('#stacked-bar-chart svg')
+      .selectAll('*')
+      .remove();
+      
   var canvas = params.canvas,
       input = params.input;
 
@@ -65,15 +115,31 @@ function initialize(params) {
       width = params.width = canvas.width,
       height = params.height = canvas.height;
 
+  var site = chosen.site;
+
   var csv = input.data;
-  
+
+  if (site == null) {
+    site = "All sites";
+  } else {
+    site = site;
+    new_csv = [];
+    for(var i=0; i<csv.length; i++) {
+      if(csv[i].station == site) {
+        new_csv.push(csv[i]);
+      }    
+    }
+    csv = new_csv;
+  }
+
   var formattedData = formatData(csv);
   var new_csv = formattedData.csv;
   var clusterNames = params.clusterNames = formattedData.clusterNames;
 
-  var chosen = params.chosen = {
-    cluster: null
-  };
+  // var chosen = params.chosen = {
+  //   cluster: null,
+  //   site: params.site
+  // };
 
   formatValue = x => isNaN(x) ? "N/A" : x.toLocaleString("en")
 
@@ -92,12 +158,11 @@ function initialize(params) {
   (new_csv)
     .map(d => (d.forEach(v => v.key = d.key), d))
 
+
   color = d3.scaleOrdinal()
     .domain(series.map(d => d.key))
     .range(d3.schemeSpectral[series.length])
     .unknown("#ccc")
-
-  //console.log(series)
   
   // heights is a dictionary to store bar height by cluster
   params.heights = setUpHeights(clusterNames, new_csv);
@@ -110,7 +175,7 @@ function initialize(params) {
   x = d3.scaleBand()
     .domain(new_csv.map(d => d.month))
     .range([margin.left, width - margin.right])
-    .padding(0.1)
+    .padding(0.2)
 
   var bar = canvas.bar = svg.selectAll('.bar')
     .enter()
@@ -132,7 +197,7 @@ function initialize(params) {
         update(params);
     })
     .append("title")
-      .text(d => `${d.data.name} ${d.key}
+      .text(d => `${site} ${d.key}
 ${formatValue(d.data[d.key])}`);
 
   svg.append("g")
@@ -141,6 +206,17 @@ ${formatValue(d.data[d.key])}`);
   svg.append("g")
       .attr('class', 'axisY')
       .call(yAxis);
+
+  svg.append("text")
+     .attr("transform", `translate(${width-margin.right},${height-margin.bottom+5})`)
+     .attr("dy", ".3em")
+     .text("Month");
+
+  svg.append("text")
+     .attr("transform", `translate(${(width+margin.left-margin.right)/2},${margin.top/2})`)
+     .attr("dy", ".3em")
+     .style("text-anchor", 'middle')
+     .text(site);
 
   var legend = params.legend = svg.selectAll('.legend')
       .data(clusterNames)
@@ -183,7 +259,10 @@ function update(params) {
       clusterNames = params.clusterNames;
   var transDuration = 700;
 
-  //y axis update
+  // update choosing site
+
+
+  // update y-axis
   if(chosen.cluster == null) {   
     y.domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
      .rangeRound([height - margin.bottom, margin.top])
@@ -234,26 +313,11 @@ function update(params) {
   bar.selectAll('rect')
      .transition()
      .duration(transDuration)
-     .attr("y", function(d) {
-       console.log(d)
-       if (!chosen.cluster) {
-        return y(d[1]);} 
-       else if (d.key == chosen.cluster) {
-        return height - margin.bottom - (y(d[0]) - y(d[1])); // todo
-       }
-       else {
-          return y(0);
-        }
+     .attr("y", function(d) { 
+        return choice(chosen.cluster, d.key, y(d[1]), height - margin.bottom - (y(d[0]) - y(d[1])), y(0));
        })
      .attr("height", function(d) {
-      if (!chosen.cluster) {
-        return y(d[0]) - y(d[1]);}
-      else if (d.key == chosen.cluster){
-        return y(d[0]) - y(d[1]);
-      }
-      else {
-         return 0;
-       }
+         return choice(chosen.cluster, d.key, y(d[0]) - y(d[1]), y(d[0]) - y(d[1]), 0);
       });
 
 }
@@ -287,7 +351,6 @@ function formatData(csv) {
   };
 }
 
-// handy function to play the update game with the bars and legend
 function choice(variable, target, nullCase, targetCase, notTargetCase){
   switch(variable) {
   case null:
