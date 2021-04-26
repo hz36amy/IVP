@@ -73,12 +73,12 @@ function drawMap(data) {
           chosen.site = chosen.site === site_name ? null : site_name;
           params.chosen = chosen;
           initialize(params);
+          update(params);
        })
 
 }
 
 // Stacked bar chart
-
 data = d3.csv("data/PRSA_Data_20130301-20170228/data.csv").then(d => drawBars(d));
 
 function drawBars(csv) {
@@ -106,7 +106,7 @@ function initialize(params) {
   d3.select('#stacked-bar-chart svg')
       .selectAll('*')
       .remove();
-      
+
   var canvas = params.canvas,
       input = params.input;
 
@@ -135,11 +135,6 @@ function initialize(params) {
   var formattedData = formatData(csv);
   var new_csv = formattedData.csv;
   var clusterNames = params.clusterNames = formattedData.clusterNames;
-
-  // var chosen = params.chosen = {
-  //   cluster: null,
-  //   site: params.site
-  // };
 
   formatValue = x => isNaN(x) ? "N/A" : x.toLocaleString("en")
 
@@ -239,6 +234,7 @@ ${formatValue(d.data[d.key])}`);
         .attr('y', function(d, i) { return 20 * (clusterNames.length - 1 - i) ;})
         .text(function(d) {return d;})
         .attr('dy', '.8em')
+        //.style('font-size', '10px')
         .style('text-anchor', 'end');
         
   legend.attr("transform", "translate(0, 100)");
