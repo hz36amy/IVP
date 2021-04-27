@@ -47,14 +47,16 @@ cols_new_name = ['year','percentage','pollution']
 df = pd.DataFrame(cols_new_name).T
 
 # month = [3,4,5,6,7,8,9,10,11,12,1,2]
-year = ['2013-01-01','2014-01-01','2015-01-01','2016-01-01']
-pollution = ['PM2.5','PM10','SO2','NO2']
+year = ['2013-01-01','2014-01-01','2015-01-01','2016-12-31']
+pollution = ['PM2.5','PM10','SO2','NO2','CO','O3']
 
 standard = {
     'PM2.5': np.mean(data[(data.year == 2013)]['PM2.5']),
     'PM10': np.mean(data[(data.year == 2013)]['PM10']),
     'SO2': np.mean(data[(data.year == 2013)]['SO2']),
-    'NO2': np.mean(data[(data.year == 2013)]['NO2'])
+    'NO2': np.mean(data[(data.year == 2013)]['NO2']),
+    'CO': np.mean(data[(data.year == 2013)]['CO']),
+    'O3': np.mean(data[(data.year == 2013)]['O3'])
 }
 
 try:

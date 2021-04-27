@@ -69,11 +69,20 @@ function drawMap(data) {
        .on("mouseover",function(){
         d3.select(this).attr("fill","orange").attr("fill-opacity", 1);})
        .on("mouseout",function(){
-        d3.select(this).attr("fill","red").attr("fill-opacity", 0.3);})
+         if(chosen.site == d3.select(this).attr("class")) {
+          d3.select(this).attr("fill","orange").attr("fill-opacity", 1);
+         } else {
+          d3.select(this).attr("fill","red").attr("fill-opacity", 0.3);
+         }})
        .on('click', function(d, i){
           var site_name = d3.select(this).attr("class");
           chosen.site = chosen.site === site_name ? null : site_name;
           params.chosen = chosen;
+          if(chosen.site == null) {
+            d3.select(this).attr("fill","red").attr("fill-opacity", 0.3).attr("stroke", null);
+          } else {
+            d3.select(this).attr("fill","orange").attr("fill-opacity", 1).attr("stroke", "brown");
+          }
           initialize(params);
           update(params);
        })

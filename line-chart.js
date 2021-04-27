@@ -46,6 +46,7 @@ function initialize_line(params) {
 
 
     var pollutionNames = data.map(d => d[0].pollution);
+    console.log(pollutionNames)
     var colors = d3.scaleOrdinal(pollutionNames, d3.schemeSpectral[pollutionNames.length]);
 
 
@@ -70,7 +71,7 @@ function initialize_line(params) {
 
     xAxis = g => g
     .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(x))
+    .call(d3.axisBottom(x).ticks(5))
 
     line = d3.line()
       .x(d => x(d.year))
@@ -87,21 +88,21 @@ function initialize_line(params) {
       .append("title")
       .text(d => `${d[0].pollution}`)
 
-    // This places the labels to the right of each line
-    linechart.selectAll('text.label')
-      .data( data )
-      .join('text')
-      .attr('class', 'label')
-      // place the ticks to the right of the chart
-      .attr('x', width - margin.right + 5)
-      // Place the ticks at the same y position as
-      // the last y value of the line (remember, d is our array of points)
-      .attr('y', d => y( d[d.length - 1].percentage ))
-      .attr('dy', '0.35em')
-      .style('fill', d => colors(d[0].pollution))
-      .style('font-family', 'sans-serif')
-      .style('font-size', 12)
-      .text(d => d[0].pollution)
+    // // This places the labels to the right of each line
+    // linechart.selectAll('text.label')
+    //   .data( data )
+    //   .join('text')
+    //   .attr('class', 'label')
+    //   // place the ticks to the right of the chart
+    //   .attr('x', width - margin.right + 5)
+    //   // Place the ticks at the same y position as
+    //   // the last y value of the line (remember, d is our array of points)
+    //   .attr('y', d => y( d[d.length - 1].percentage ))
+    //   .attr('dy', '0.35em')
+    //   .style('fill', d => colors(d[0].pollution))
+    //   .style('font-family', 'sans-serif')
+    //   .style('font-size', 12)
+    //   .text(d => d[0].pollution)
 
 
     svg.append("g")
@@ -132,17 +133,27 @@ function sortdata(csv) {
         return row['pollution'] == 'NO2'
     });
 
+    var CO = csv.filter(function(row) {
+        return row['pollution'] == 'CO'
+    });
+
+    var O3 = csv.filter(function(row) {
+        return row['pollution'] == 'O3'
+    });
+
     new_csv.push(PM25);
     new_csv.push(PM10);
     new_csv.push(SO2);
     new_csv.push(NO2);
+    new_csv.push(CO);
+    new_csv.push(O3);
 
     parseDate = d3.timeParse("%Y-%m-%d");
     new_csv.forEach(element => parseDate(element["year"]));
 
-    for(i = 0,len=new_csv.length; i < len; i++) {
-      for(j = 0,len=new_csv[i].length; j < len; j++) {
-          //console.log(new_csv[i][j].year)
+    for(i = 0; i < new_csv.length; i++) {
+      for(j = 0; j < new_csv[i].length; j++) {
+          console.log(new_csv.length)
           new_csv[i][j].year = parseDate(new_csv[i][j].year)
       }
     }
