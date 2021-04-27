@@ -1,21 +1,23 @@
-
+// RQ1
 // Map visualization
 map = d3.json("https://geo.datav.aliyun.com/areas/bound/geojson?code=110000").then(d => drawMap(d));
 
 var coordinates = {
-  "Aotizhongxin": [116.400194,39.99232],
-  "Changping": [116.225739,40.229698],
-  "Dingling": [116.232569,40.300468],
-  "Dongsi": [117.128967,40.139887],
-  "Guanyuan": [116.368796,39.938247],
-  "Gucheng": [116.191233,39.917884],
-  "Huairou": [116.635511,40.324818],
-  "Nongzhanguan": [116.468772,39.946988],
-  "Shunyi": [116.658552,40.137235],
-  "Tiantan": [116.419342,39.888663],
-  "Wanliu": [116.302908,39.977845],
-  "Wanshouxigong": [116.37434,39.885845]
+  "Aotizhongxin": [116.397,39.982],
+  "Changping": [116.234,40.217],
+  "Dingling": [116.22,40.292],
+  "Dongsi": [116.417,39.929],
+  "Guanyuan": [116.339,39.929],
+  "Gucheng": [116.176,39.914],
+  "Huairou": [116.628,40.328],
+  "Nongzhanguan": [116.461,39.937],
+  "Shunyi": [116.655,40.127],
+  "Tiantan": [116.407,39.886],
+  "Wanliu": [116.287,39.987],
+  "Wanshouxigong": [116.352,39.878]
 }
+
+var all_sites = Object.keys(coordinates);
 
 var params = {};
 var chosen = {
@@ -33,7 +35,7 @@ function drawMap(data) {
       .attr("width",width)
       .attr("height",height);
 
-  var projection = d3.geoMercator().center([116, 39]).scale(10000).translate([width/3, height/1.5]);
+  var projection = d3.geoMercator().center([116, 39]).scale(13000).translate([width/3, height - 180]);
   var path = d3.geoPath().projection(projection)
 
   var group = mapSVG.append("g")
@@ -46,7 +48,7 @@ function drawMap(data) {
         .attr("d", path)
 
   var names = Object.keys(coordinates)
-  
+
   for(var i=0; i<names.length; i++) {
     var name = names[i];
     //console.log(coordinates[names[i]]);
@@ -57,7 +59,7 @@ function drawMap(data) {
         .attr("cx",proj[0])  
         .attr("cy",proj[1])
         .attr("fill", "red") 
-        .attr("fill-opacity", 0.4)
+        .attr("fill-opacity", 0.3)
         .attr("r",8)
         .append("title")
         .text(name)
@@ -65,9 +67,9 @@ function drawMap(data) {
 
   group.selectAll("circle")
        .on("mouseover",function(){
-        d3.select(this).attr("fill","orange");})
+        d3.select(this).attr("fill","orange").attr("fill-opacity", 1);})
        .on("mouseout",function(){
-        d3.select(this).attr("fill","red");})
+        d3.select(this).attr("fill","red").attr("fill-opacity", 0.3);})
        .on('click', function(d, i){
           var site_name = d3.select(this).attr("class");
           chosen.site = chosen.site === site_name ? null : site_name;
@@ -119,6 +121,11 @@ function initialize(params) {
 
   var csv = input.data;
 
+  var site_max = findMax(csv).max;
+  var site_min = findMax(csv).min;
+  var site_mean = findMax(csv).mean_list;
+  //console.log(site_max);
+
   if (site == null) {
     site = "All sites";
   } else {
@@ -131,6 +138,13 @@ function initialize(params) {
     }
     csv = new_csv;
   }
+
+  var radius = [5, 15];
+  var rScale = d3.scaleLinear()
+                 .domain([site_min, site_max])
+                 .rangeRound(radius);
+
+  changeCircles(rScale, site_mean);
 
   var formattedData = formatData(csv);
   var new_csv = formattedData.csv;
@@ -255,8 +269,6 @@ function update(params) {
       clusterNames = params.clusterNames;
   var transDuration = 700;
 
-  // update choosing site
-
 
   // update y-axis
   if(chosen.cluster == null) {   
@@ -341,9 +353,18 @@ function formatData(csv) {
     var obj = {month: i, "PM2.5": d3.mean(PM2_5), PM10: d3.mean(PM10), SO2: d3.mean(SO2), NO2: d3.mean(NO2), CO: d3.mean(CO), O3: d3.mean(O3)}
     new_csv.push(obj)
   }
+
+  //console.log(new_csv)
+  var sum = [];
+  for (var i=0; i<new_csv.length; i++){
+    sum.push(new_csv[i]['PM2.5'] + new_csv[i]['PM10'] + new_csv[i]['SO2'] + new_csv[i]['NO2'] + new_csv[i]['CO'] + new_csv[i]['O3']);
+  }
+  var mean = d3.mean(sum)
+
   return {
     csv: new_csv,
     clusterNames: clusterNames,
+    mean: mean
   };
 }
 
@@ -368,3 +389,36 @@ function setUpHeights(clusterNames, csv) {
   return heights;
 }
 
+function findMax(csv) {
+  var mean_list = [];
+
+  for(var i=0; i<all_sites.length; i++) {
+    new_csv = [];
+    site = all_sites[i];
+    for(var j=0; j<csv.length; j++) {
+      if(csv[j].station == site) {
+        new_csv.push(csv[j]);
+      }    
+    }
+    mean = formatData(new_csv).mean;
+    mean_list.push(mean);
+  }
+
+  //console.log(mean_list)
+
+  return {
+    max: d3.max(mean_list),
+    mean_list: mean_list,
+    min: d3.min(mean_list)
+  }
+}
+
+function changeCircles(rScale, site_mean) {
+
+  d3.selectAll("circle")
+    .attr('r', function(d, i){
+      var site_name = d3.select(this).attr("class");
+      //console.log(site_mean[all_sites.indexOf(site_name)]);
+      return rScale(site_mean[all_sites.indexOf(site_name)]);
+ })
+}
