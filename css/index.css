@@ -13,6 +13,12 @@ body {
     background-size: cover;
 }
 
+#RQ1 p, #RQ4 p, #RQ5 p {
+    text-align: center;
+    line-height: 50px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
 #header {
     height: 110px;
     margin: 0 auto;
@@ -40,16 +46,19 @@ body {
     float: left;
 }
 #stacked-bar-chart {
+    padding-left: 50px;
     width: 55%;
     float: left;
+    margin-top: 50px;
 }
-#RQ1, #RQ2, #RQ3, #RQ4 {
+#RQ1, #RQ2, #RQ3, #RQ4, #RQ5 {
     margin: 0 auto;
-    height: 800px;
-    width: 1500px;
+    height: 700px;
+    width: 1300px;
     background-color:rgba(255, 255, 255, 1);
 }
+
 #line-chart {
-    width: 50%;
-    float: left;
+    margin: 0 auto;
+    width: 60%;
 }

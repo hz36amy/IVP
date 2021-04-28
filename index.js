@@ -27,15 +27,15 @@ var chosen = {
 params.chosen = chosen;
 
 function drawMap(data) {
-  var width = 800,
-      height = 800;
+  var width = 500,
+      height = 500;
 
   var mapSVG = d3.select("#map")
       .append("svg")
       .attr("width",width)
       .attr("height",height);
 
-  var projection = d3.geoMercator().center([116, 39]).scale(13000).translate([width/3, height - 180]);
+  var projection = d3.geoMercator().center([116, 39]).scale(11000).translate([width/3, height + 100]);
   var path = d3.geoPath().projection(projection)
 
   var group = mapSVG.append("g")
@@ -94,7 +94,7 @@ data = d3.csv("data/PRSA_Data_20130301-20170228/data.csv").then(d => drawBars(d)
 
 function drawBars(csv) {
   var input = {'data': csv, 'width': 500, 'height': 300};
-  var margin = {top: 40, right: 60, bottom: 40, left: 80},
+  var margin = {top: 40, right: 60, bottom: 40, left: 40},
   width = input.width + margin.left + margin.right,
   height = input.height + margin.top + margin.bottom;
 
@@ -148,12 +148,53 @@ function initialize(params) {
     csv = new_csv;
   }
 
-  var radius = [5, 15];
-  var rScale = d3.scaleLinear()
+  var radius = [5, 9, 13, 15];
+  var rScale = d3.scaleQuantize()
                  .domain([site_min, site_max])
-                 .rangeRound(radius);
+                 .range(radius);
 
   changeCircles(rScale, site_mean);
+
+  // circle legend
+  var mapLegend = d3.select("#map svg")
+                    .append("g")
+                    .attr("class", "legend")
+                    .attr("transform", `translate(${margin.left},${margin.top+50})`)
+
+  var legendData = [
+    {value: 15, d: 'Most polluted'},
+    {value: 13, d: ''},
+    {value: 9, d: ''},
+    {value: 5, d: ''}
+  ];
+
+  var dy = 20;
+
+  mapLegend.selectAll("circle.legend-element")
+           .data(legendData)
+           .enter().append("circle")
+           .attr("class", "legend-element")
+           .attr("cx", 0)
+           .attr("cy", function(d,i) {
+             return i * dy;
+           })
+           .attr("r", function(d) {
+             return d.value;
+           });
+
+  mapLegend.selectAll("text.legend-element")
+           .data(legendData)
+           .enter().append("text")
+           .attr("x", 20)
+           .attr("y", function(d,i) {
+             return i * dy;
+           })
+           .attr("dy",".375em")
+           .text(function(d) {
+             return d.d;
+           });
+
+  
 
   var formattedData = formatData(csv);
   var new_csv = formattedData.csv;
@@ -261,6 +302,8 @@ ${formatValue(d.data[d.key])}`);
         .style('text-anchor', 'end');
         
   legend.attr("transform", "translate(0, 100)");
+
+
 
 }
 

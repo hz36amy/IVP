@@ -13,14 +13,13 @@ data = d3.csv("data/PRSA_Data_20130301-20170228/air-quality-overall.csv").then(d
 // draw line chart
 function drawLines(csv) {
     var input = {'data': csv, 'width': 500, 'height': 300};
-    var margin = {top: 40, right: 60, bottom: 40, left: 80},
+    var margin = {top: 30, right: 60, bottom: 40, left: 80},
     width = input.width + margin.left + margin.right,
     height = input.height + margin.top + margin.bottom;
   
     var svgLine = d3.select("#line-chart")
               .append("svg")
-              .attr("viewBox", [0, 0, width, height])
-              .attr("fill", "white");
+              .attr("viewBox", [0, 0, width, height]);
   
     var canvas = {svg: svgLine, margin: margin, width: width, height: height};
   
@@ -79,6 +78,13 @@ function initialize_line(params) {
       .y(d => y(parseFloat(d.percentage)))
       .curve(d3.curveBasis)
 
+    svg.append("text")
+      .attr("transform", `translate(${margin.left + 3},${margin.top - 8})`)
+      .attr("font-size", 10)
+      .attr("font-family", "sans-serif")
+      .text("(%)")
+      .style("text-anchor", "end");
+
     var linechart = canvas.line = svg.selectAll('path')
       .data(data)
       .join('path')
@@ -105,13 +111,14 @@ function initialize_line(params) {
     //   .style('font-size', 12)
     //   .text(d => d[0].pollution)
 
-
     svg.append("g")
       .call(xAxis);
 
     svg.append("g")
       .attr('class', 'axisY')
       .call(yAxis);
+
+    svg.call(hover, linechart);
 
 }
 
@@ -161,4 +168,8 @@ function sortdata(csv) {
 
     console.log(new_csv);
     return new_csv;
+}
+
+function hover(svg, path) {
+
 }

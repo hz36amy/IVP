@@ -66,7 +66,12 @@ try:
     for y in year:
         for p in pollution:
             y1 = int(y[:4])
+
             mean = np.mean(data[data.year == y1][p])
+
+            if(y1 == 2013):
+                standard[p] = mean
+
             perc = (mean/standard[p])*100
             new_row = [y, perc, p]
             new_data = pd.DataFrame(new_row).T
@@ -74,3 +79,6 @@ try:
             print(y, "finish")
 except PermissionError as e:
     print('Error:' + str(type(e)))
+
+print(standard['PM2.5'])
+print(standard['PM10'])
