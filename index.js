@@ -294,6 +294,10 @@ function update(params) {
          } else {
            return "brown";
          }})
+       .attr("mouse-over", function() {
+        if(chosen.site == d3.select(this).attr("class")) {
+          d3.select(this).attr("fill","orange").attr("fill-opacity", 1);
+        }});
 
 
   // update y-axis
