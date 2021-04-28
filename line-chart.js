@@ -19,7 +19,8 @@ function drawLines(csv) {
   
     var svgLine = d3.select("#line-chart")
               .append("svg")
-              .attr("viewBox", [0, 0, width, height]);
+              .attr("viewBox", [0, 0, width, height])
+              .attr("fill", "white");
   
     var canvas = {svg: svgLine, margin: margin, width: width, height: height};
   

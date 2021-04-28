@@ -44,7 +44,7 @@ function drawMap(data) {
         .data(data.features)
         .enter()
         .append("path")
-        .attr("fill", "#ddd")
+        .attr("fill", "#eee")
         .attr("d", path)
 
   var names = Object.keys(coordinates)
@@ -277,6 +277,23 @@ function update(params) {
       legend = params.legend,
       clusterNames = params.clusterNames;
   var transDuration = 700;
+
+  // update circles
+  d3.selectAll("circle")
+       .attr("fill", function() {
+        if(chosen.site != d3.select(this).attr("class")) {
+          return "red";
+         }})
+       .attr("fill-opacity", function() {
+          if(chosen.site != d3.select(this).attr("class")) {
+            return 0.3;
+           }})
+       .attr("stroke", function() {
+        if(chosen.site != d3.select(this).attr("class")) {
+          return null;
+         } else {
+           return "brown";
+         }})
 
 
   // update y-axis

@@ -3,48 +3,14 @@
     <head>
         <meta charset="UTF-8">
         <title>IVP Project</title>
-        <style type="text/css">
-            #header {
-                height: 400px;
-                width: 1000px;
-                margin: 0 auto;
-                text-align: center;
-                font-size: 4em;
-                line-height: 100px;
-            }
-
-            #subtitle {
-                font-size: 0.4em;
-                line-height: 0;
-
-            }
-
-            #map {
-                width: 30%;
-                float: left;
-            }
-            #stacked-bar-chart {
-                width: 55%;
-                float: left;
-            }
-            #RQ1, #RQ2, #RQ3, #RQ4 {
-                margin: 0 auto;
-                width: 1500px;
-                height: 800px;
-            }
-            #line-chart {
-                width: 50%;
-                float: left;
-            }
-
-        </style>
+        <link rel="stylesheet" href="css/index.css">
         <script src="https://d3js.org/d3.v6.min.js"></script>
         <script src="https://d3js.org/d3-queue.v3.min.js"></script>
     </head>
     <body>
         <div id="header">
-            <p>Beijing Air Quality Visualization</p>
-            <p id="subtitle">from 20130301 to 20170228</p>
+            <p id="title">Beijing Air Quality Visualization</p>
+            <p id="subtitle">Yangfan Zhou | COMP3022 Project</p>
         </div>
         <div id="RQ1">
             <div id="stacked-bar-chart"></div>
