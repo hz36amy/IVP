@@ -58,7 +58,24 @@ body {
     background-color:rgba(255, 255, 255, 1);
 }
 
+#footer {
+    height: 300px;
+}
+
 #line-chart {
     margin: 0 auto;
     width: 60%;
+}
+
+#play {
+    display: block;
+    margin: 0 auto;
+}
+
+.solid {
+    stroke: solid;
+}
+
+.dashed {
+    stroke-dasharray: 5,5;
 }

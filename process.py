@@ -59,6 +59,8 @@ standard = {
     'O3': np.mean(data[(data.year == 2013)]['O3'])
 }
 
+national_standard_PM25 = 35
+
 try:
     df.to_csv(path + '/' + new_filename, encoding = 'gbk', header = False, index = False)
    
@@ -77,6 +79,11 @@ try:
             new_data = pd.DataFrame(new_row).T
             new_data.to_csv(path + '/' + new_filename, mode = 'a', encoding = 'gbk', header = False, index = False)
             print(y, "finish")
+        m_s_0 = (national_standard_PM25/standard['PM2.5'])*100
+        new_row = [y, m_s_0, "PM2.5 standard"]
+        new_data = pd.DataFrame(new_row).T
+        new_data.to_csv(path + '/' + new_filename, mode = 'a', encoding = 'gbk', header = False, index = False)
+    
 except PermissionError as e:
     print('Error:' + str(type(e)))
 

@@ -18,7 +18,7 @@ var coordinates = {
 }
 
 var all_sites = Object.keys(coordinates);
-
+var mapText = false;
 var params = {};
 var chosen = {
   cluster: null,
@@ -182,19 +182,21 @@ function initialize(params) {
              return d.value;
            });
 
-  mapLegend.selectAll("text.legend-element")
+  if(!mapText) {
+    mapLegend.selectAll("text.legend-element")
            .data(legendData)
            .enter().append("text")
            .attr("x", 20)
            .attr("y", function(d,i) {
-             return i * dy;
+             return i * dy + 5;
            })
-           .attr("dy",".375em")
+           .attr("font-size", "13px")
+           .attr("font-family", "sans-serif")
            .text(function(d) {
              return d.d;
            });
-
-  
+    mapText = true;
+  }
 
   var formattedData = formatData(csv);
   var new_csv = formattedData.csv;
@@ -268,13 +270,15 @@ ${formatValue(d.data[d.key])}`);
 
   svg.append("text")
      .attr("transform", `translate(${width-margin.right},${height-margin.bottom+5})`)
-     .attr("dy", ".3em")
+     .attr("font-size", 10)
+     .attr("font-family", "sans-serif")
      .text("Month");
 
   svg.append("text")
      .attr("transform", `translate(${(width+margin.left-margin.right)/2},${margin.top/2})`)
      .attr("dy", ".3em")
      .style("text-anchor", 'middle')
+     .attr("font-family", "sans-serif")
      .text(site);
 
   var legend = params.legend = svg.selectAll('.legend')
@@ -299,7 +303,8 @@ ${formatValue(d.data[d.key])}`);
         .text(function(d) {return d;})
         .attr('dy', '.8em')
         //.style('font-size', '10px')
-        .style('text-anchor', 'end');
+        .style('text-anchor', 'end')
+        .attr("font-family", "sans-serif");
         
   legend.attr("transform", "translate(0, 100)");
 
