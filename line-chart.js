@@ -1,12 +1,11 @@
 console.log("Connect success!")
 
-// var params = {};
-// var chosen = {
-//   cluster: null,
-//   site: null
-// };
-// params.chosen = chosen;
+var tipBox;
+var x_l;
+var tooltipLine;
+var colors;
 
+const tooltip = d3.select('#tooltip');
 // data
 data = d3.csv("data/PRSA_Data_20130301-20170228/air-quality-overall.csv").then(d => drawLines(d));
 
@@ -19,7 +18,8 @@ function drawLines(csv) {
   
     var svgLine = d3.select("#line-chart")
               .append("svg")
-              .attr("viewBox", [0, 0, width, height]);
+              .attr("viewBox", [0, 0, width, height])
+              .attr("id", "line-chart-box");
   
     var canvas = {svg: svgLine, margin: margin, width: width, height: height};
   
@@ -46,37 +46,43 @@ function initialize_line(params) {
 
 
     var pollutionNames =  ["PM2.5", "PM10", "SO2", "NO2", "CO", "O3"];
-    var colors = d3.scaleOrdinal(pollutionNames, d3.schemeSpectral[pollutionNames.length]);
-
-
-    startDate = data[0][0].year;
-    endDate = data[0][3].year;
-    x = d3.scaleTime()
-    .domain([startDate, endDate])
-    .range([margin.left, width - margin.right])
+    colors = d3.scaleOrdinal(pollutionNames, d3.schemeSpectral[pollutionNames.length]);
 
     var p = data.flat().map(d => parseFloat(d.percentage));
     // console.log(p)
     yMin = d3.min(p);
     yMax = d3.max(p);
     
+    // Build y scale and axis
     y = params.y = d3.scaleLinear()
     .domain([yMin,yMax])
-    .rangeRound([height - margin.bottom - 30, margin.top])
+    .rangeRound([height - margin.bottom - 30, margin.top]);
 
     yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
     .call(d3.axisLeft(y).ticks(null, "s"))
-    .call(g => g.select(".domain").remove())
+    .call(g => g.select(".domain").remove());
+
+    // Build x scale and axis
+    startDate = data[0][0].year;
+    endDate = data[0][3].year;
+    const x = d3.scaleTime()
+    .domain([startDate, endDate])
+    .range([margin.left, width - margin.right]);
+
+    // linear scale for tooltip position
+    x_l = d3.scaleLinear()
+    .domain([2013,2016])
+    .range([margin.left, width - margin.right]);
 
     xAxis = g => g
     .attr("transform", `translate(0,${height - margin.bottom})`)
-    .call(d3.axisBottom(x).ticks(5))
+    .call(d3.axisBottom(x).ticks(5));
 
     line = d3.line()
       .x(d => x(d.year))
       .y(d => y(parseFloat(d.percentage)))
-      .curve(d3.curveBasis)
+      .curve(d3.curveBasis);
 
     svg.append("text")
       .attr("transform", `translate(${margin.left + 3},${margin.top - 8})`)
@@ -85,6 +91,9 @@ function initialize_line(params) {
       .text("(%)")
       .style("text-anchor", "end");
 
+
+
+    // add lines
     var linechart = canvas.line = svg.selectAll('path')
       .data(data)
       .join('path')
@@ -135,6 +144,20 @@ function initialize_line(params) {
         .style('text-anchor', 'end');
         
     legend.attr("transform", `translate(0, 120)`);
+
+    tooltipLine = svg.append('line');
+
+    tipBox = svg.append('rect')
+			    .attr('width', width - margin.left - margin.right)
+			    .attr('height', height - margin.top - margin.bottom)
+                .attr('x', margin.left)
+                .attr('y', margin.top)
+			    .attr('opacity', 0)
+			    .on('mouseover', function(event, d) {
+                    drawTooltip(event,data);
+                })
+                .on('mouseout', removeTooltip);
+
 
 }
 
@@ -207,3 +230,52 @@ function tweenDash() {
         i = d3.interpolateString("0," + l, l + "," + l);
     return function(t) { return i(t) };
 }
+
+function removeTooltip() {
+
+    if (tooltip) tooltip.style('display', 'none');
+    if (tooltipLine) tooltipLine.attr('stroke', 'none');
+  }
+  
+function drawTooltip(event, data) {
+
+    var years = [2013, 2014, 2015, 2016];
+    const[x_, y_] = d3.pointer(event);
+    console.log(x_);
+    //console.log(y_);
+    //console.log(d3.pointer(event,this)[0]);
+    const year = Math.floor(x_l.invert(x_)+1);
+    
+    tooltipLine.attr('stroke', 'black')
+      .attr('x1', x_l(year))
+      .attr('x2', x_l(year))
+      .attr('y1', 40)
+      .attr('y2', 330);
+    
+    var box = document.getElementById("line-chart-box");
+    left = box.getBoundingClientRect().left;
+    top_ = box.getBoundingClientRect().top;
+    //console.log(box.getBoundingClientRect().top);
+    
+    tooltip.html(year)
+      .style('display', 'block')
+      .style('left', x_ + left +'px')
+      .style('top', y_ + top_ +'px')
+      .selectAll()
+      .data(data).enter()
+      .append('div')
+      .style('color', d => colors(`${d[0].pollution}`))
+      .html(function(d) {
+          if(d[0].pollution != "PM2.5 standard") {
+              pollution = d[0].pollution;
+              i = years.indexOf(year);
+              perc = d[i].percentage;
+              //console.log(typeof(perc));
+              perc = perc.substr(0,5);
+              text = pollution + ": " + perc;
+              //console.log(text);
+              return text;
+          }
+      });
+
+  }

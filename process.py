@@ -47,7 +47,7 @@ cols_new_name = ['year','percentage','pollution']
 df = pd.DataFrame(cols_new_name).T
 
 # month = [3,4,5,6,7,8,9,10,11,12,1,2]
-year = ['2013-01-01','2014-01-01','2015-01-01','2016-12-31']
+year = ['2013-01-01','2014-01-01','2015-01-01','2016-01-01']
 pollution = ['PM2.5','PM10','SO2','NO2','CO','O3']
 
 standard = {

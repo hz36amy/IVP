@@ -237,6 +237,12 @@ function initialize(params) {
     .domain(new_csv.map(d => d.month))
     .range([margin.left, width - margin.right])
     .padding(0.2)
+ 
+
+  // Tooltip
+  var div = d3.select("#RQ1").append("div")
+              .attr("class","d3-tip")
+              .style("opacity",0);
 
   var bar = canvas.bar = svg.selectAll('.bar')
     .enter()
