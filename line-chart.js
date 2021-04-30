@@ -205,12 +205,12 @@ function sortdata(csv) {
 
     for(i = 0; i < new_csv.length; i++) {
       for(j = 0; j < new_csv[i].length; j++) {
-          console.log(new_csv.length)
+          //console.log(new_csv.length)
           new_csv[i][j].year = parseDate(new_csv[i][j].year)
       }
     }
 
-    console.log(new_csv);
+    //console.log(new_csv);
     return new_csv;
 }
 
@@ -241,7 +241,7 @@ function drawTooltip(event, data) {
 
     var years = [2013, 2014, 2015, 2016];
     const[x_, y_] = d3.pointer(event);
-    console.log(x_);
+    //console.log(x_);
     //console.log(y_);
     //console.log(d3.pointer(event,this)[0]);
     const year = Math.floor(x_l.invert(x_)+1);
