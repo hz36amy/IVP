@@ -148,7 +148,8 @@ function initialize_RQ5(params) {
 			    .on('mouseover', function(event, d) {
                     drawTooltipRQ5(event,dataRQ5);
                 })
-                .on('mouseout', removeTooltip);
+                .on('mouseout', removeTooltip)
+                .attr("id", "tipBoxRQ5");
 
 }
 
@@ -182,7 +183,7 @@ function sortdataRQ5(csv) {
       }
     }
 
-    console.log(new_csv)
+    //console.log(new_csv)
     return new_csv;
 }
 
@@ -193,7 +194,7 @@ function drawTooltipRQ5(event, data) {
     //console.log(x_);
     //console.log(y_);
     //console.log(d3.pointer(event,this)[0]);
-    const year = Math.floor(x_l.invert(x_)+1);
+    const year = Math.floor(x_l.invert(x_)+0.5);
     
     tooltipLineRQ5.attr('stroke', 'black')
       .attr('x1', x_l(year))

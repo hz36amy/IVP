@@ -154,10 +154,14 @@ function initialize_line(params) {
                 .attr('x', margin.left)
                 .attr('y', margin.top)
 			    .attr('opacity', 0)
+                .on('mousemove', function(event, d) {
+                    drawTooltip(event,data);
+                })
 			    .on('mouseover', function(event, d) {
                     drawTooltip(event,data);
                 })
-                .on('mouseout', removeTooltip);
+                .on('mouseout', removeTooltip)
+                .attr('id', 'tipBox');
 
 
 }
@@ -246,7 +250,8 @@ function drawTooltip(event, data) {
     //console.log(x_);
     //console.log(y_);
     //console.log(d3.pointer(event,this)[0]);
-    const year = Math.floor(x_l.invert(x_)+1);
+    const year = Math.floor(x_l.invert(x_)+0.5);
+    //console.log(year);
     
     tooltipLine.attr('stroke', 'black')
       .attr('x1', x_l(year))
