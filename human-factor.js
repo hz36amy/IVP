@@ -1,39 +1,31 @@
 console.log("Connect success!")
 
-var tipBox;
-var x_l;
-var tooltipLine;
-var tooltipLineRQ5;
-var colors;
-
-const tooltip = d3.select('#tooltip');
 // data
-data = d3.csv("data/PRSA_Data_20130301-20170228/air-quality-overall.csv").then(d => drawLines(d));
+data = d3.csv("data/PRSA_Data_20130301-20170228/human-factor.csv").then(d => RQ5(d));
 
-// draw line chart
-function drawLines(csv) {
+// draw line chart RQ5
+function RQ5(csv) {
     var input = {'data': csv, 'width': 500, 'height': 300};
     var margin = {top: 30, right: 60, bottom: 40, left: 120},
     width = input.width + margin.left + margin.right,
     height = input.height + margin.top + margin.bottom;
   
-    var svgLine = d3.select("#line-chart")
+    var svgLineRQ5 = d3.select("#human-factor")
               .append("svg")
               .attr("viewBox", [0, 0, width, height])
-              .attr("id", "line-chart-box");
+              .attr("id", "human-factor-box");
   
-    var canvas = {svg: svgLine, margin: margin, width: width, height: height};
+    var canvas = {svg: svgLineRQ5, margin: margin, width: width, height: height};
   
     //var params = {'input': input, 'canvas': canvas};
     // params.input = input;
     // params.canvas = canvas;
   
     var params1 = {'input': input, 'canvas': canvas};
-    initialize_line(params1);
-    // update(params);
+    initialize_RQ5(params1);
 }
 
-function initialize_line(params) {
+function initialize_RQ5(params) {
     var canvas = params.canvas,
     input = params.input;
 
@@ -43,21 +35,23 @@ function initialize_line(params) {
     height = params.height = canvas.height;
 
     var csv = input.data;
-    data = sortdata(csv);
+    console.log(csv);
+    dataRQ5 = sortdataRQ5(csv);
+
+    //console.log(data)
 
 
-    var pollutionNames =  ["PM2.5", "PM10", "SO2", "NO2", "CO", "O3"];
-    colors = d3.scaleOrdinal(pollutionNames, d3.schemeSpectral[pollutionNames.length]);
+    var Names =  ["Industrial", "GDP", "Population"];
+    colorsRQ5 = d3.scaleOrdinal(Names, d3.schemeSet1);
 
-    var p = data.flat().map(d => parseFloat(d.percentage));
-    // console.log(p)
+    var p = dataRQ5.flat().map(d => d.growth);
     yMin = d3.min(p);
     yMax = d3.max(p);
     
     // Build y scale and axis
     y = params.y = d3.scaleLinear()
     .domain([yMin,yMax])
-    .rangeRound([height - margin.bottom - 30, margin.top]);
+    .rangeRound([height - margin.bottom, margin.top]);
 
     yAxis = g => g
     .attr("transform", `translate(${margin.left},0)`)
@@ -71,6 +65,15 @@ function initialize_line(params) {
     .domain([startDate, endDate])
     .range([margin.left, width - margin.right]);
 
+    axis0 = svg.append("line")
+               .attr("x1", margin.left)
+               .attr("x2", width-margin.right)
+               .attr("y1", y(0))
+               .attr("y2", y(0))
+               .style('stroke', 'gray')
+               .style('stroke-width', 2)
+               .attr("class", "dashed")
+
     // linear scale for tooltip position
     x_l = d3.scaleLinear()
     .domain([2013,2016])
@@ -82,8 +85,7 @@ function initialize_line(params) {
 
     line = d3.line()
       .x(d => x(d.year))
-      .y(d => y(parseFloat(d.percentage)))
-      .curve(d3.curveBasis);
+      .y(d => y(d.growth));
 
     svg.append("text")
       .attr("transform", `translate(${margin.left + 3},${margin.top - 8})`)
@@ -96,25 +98,16 @@ function initialize_line(params) {
 
     // add lines
     var linechart = canvas.line = svg.selectAll('path')
-      .data(data)
+      .data(dataRQ5)
       .join('path')
-      .attr('class', function(d) {
-          if(d[0].pollution == "PM2.5 standard") {
-              return 'dashed';
-          } else {
-              return 'solid';
-          }
-      })
       .attr('d', line)
       .call(transition)
       .style('stroke-width',2)
-      .style('stroke', d => colors(`${d[0].pollution}`))
+      .style('stroke', d => colorsRQ5(`${d[0].type}`))
       .style('fill', 'none')
       .append("title")
-      .text(d => `${d[0].pollution}`);
+      .text(d => `${d[0].type}`);
  
-    
-
     svg.append("g")
       .call(xAxis);
 
@@ -122,23 +115,21 @@ function initialize_line(params) {
       .attr('class', 'axisY')
       .call(yAxis);
 
-    svg.call(hover, linechart);
-
     var legend = params.legend = svg.selectAll('.legend')
-      .data(pollutionNames)
+      .data(Names)
       .enter().append('g')
       .attr('class', 'legend');
 
     legend.append('rect')
         .attr('x', margin.left - 46)
-        .attr('y', function(d, i) {return 20 * (pollutionNames.length - 1.4 - i);})
+        .attr('y', function(d, i) {return 20 * (Names.length - 1.4 - i);})
         .attr('height', 10)
         .attr('width', 10)
-        .attr('fill', function(d){ return colors(d);});
+        .attr('fill', function(d){ return colorsRQ5(d);});
   
     legend.append('text')
         .attr('x', margin.left - 50)
-        .attr('y', function(d, i) { return 20 * (pollutionNames.length - 1 - i) ;})
+        .attr('y', function(d, i) { return 20 * (Names.length - 1 - i) ;})
         .text(function(d) {return d;})
         .style('font-size', '10px')
         .attr("font-family", "sans-serif")
@@ -146,60 +137,39 @@ function initialize_line(params) {
         
     legend.attr("transform", `translate(0, 120)`);
 
-    tooltipLine = svg.append('line');
+    tooltipLineRQ5 = svg.append('line');
 
-    tipBox = svg.append('rect')
+    tipBoxRQ5 = svg.append('rect')
 			    .attr('width', width - margin.left - margin.right)
 			    .attr('height', height - margin.top - margin.bottom)
                 .attr('x', margin.left)
                 .attr('y', margin.top)
 			    .attr('opacity', 0)
 			    .on('mouseover', function(event, d) {
-                    drawTooltip(event,data);
+                    drawTooltipRQ5(event,dataRQ5);
                 })
                 .on('mouseout', removeTooltip);
 
-
 }
 
-function sortdata(csv) {
+function sortdataRQ5(csv) {
     var new_csv = [];
 
-    var PM25 = csv.filter(function(row) {
-        return row['pollution'] == 'PM2.5'
+    var Industrial = csv.filter(function(row) {
+        return row['type'] == 'Industrial'
     });
 
-    var PM10 = csv.filter(function(row) {
-        return row['pollution'] == 'PM10'
+    var GDP = csv.filter(function(row) {
+        return row['type'] == 'GDP'
     });
 
-    var SO2 = csv.filter(function(row) {
-        return row['pollution'] == 'SO2'
+    var Population = csv.filter(function(row) {
+        return row['type'] == 'Population'
     });
 
-    var NO2 = csv.filter(function(row) {
-        return row['pollution'] == 'NO2'
-    });
-
-    var CO = csv.filter(function(row) {
-        return row['pollution'] == 'CO'
-    });
-
-    var O3 = csv.filter(function(row) {
-        return row['pollution'] == 'O3'
-    });
-
-    var standard = csv.filter(function(row) {
-        return row['pollution'] == 'PM2.5 standard'
-    });
-
-    new_csv.push(PM25);
-    new_csv.push(PM10);
-    new_csv.push(SO2);
-    new_csv.push(NO2);
-    new_csv.push(CO);
-    new_csv.push(O3);
-    new_csv.push(standard);
+    new_csv.push(Industrial);
+    new_csv.push(GDP);
+    new_csv.push(Population);
 
     parseDate = d3.timeParse("%Y-%m-%d");
     new_csv.forEach(element => parseDate(element["year"]));
@@ -208,38 +178,15 @@ function sortdata(csv) {
       for(j = 0; j < new_csv[i].length; j++) {
           //console.log(new_csv.length)
           new_csv[i][j].year = parseDate(new_csv[i][j].year)
+          new_csv[i][j].growth = parseFloat(new_csv[i][j].growth)
       }
     }
 
-    //console.log(new_csv);
+    console.log(new_csv)
     return new_csv;
 }
 
-function hover(svg, path) {
-
-}
-
-function transition(path) {
-    path.transition()
-        .duration(10000)
-        .attrTween("stroke-dasharray", tweenDash)
-        .on("end", ()=>{d3.select(this).call(transition)});
-}
-
-function tweenDash() {
-    const l = this.getTotalLength(),
-        i = d3.interpolateString("0," + l, l + "," + l);
-    return function(t) { return i(t) };
-}
-
-function removeTooltip() {
-
-    if (tooltip) tooltip.style('display', 'none');
-    if (tooltipLine) tooltipLine.attr('stroke', 'none');
-    if (tooltipLineRQ5) tooltipLineRQ5.attr('stroke', 'none');
-  }
-  
-function drawTooltip(event, data) {
+function drawTooltipRQ5(event, data) {
 
     var years = [2013, 2014, 2015, 2016];
     const[x_, y_] = d3.pointer(event);
@@ -248,13 +195,13 @@ function drawTooltip(event, data) {
     //console.log(d3.pointer(event,this)[0]);
     const year = Math.floor(x_l.invert(x_)+1);
     
-    tooltipLine.attr('stroke', 'black')
+    tooltipLineRQ5.attr('stroke', 'black')
       .attr('x1', x_l(year))
       .attr('x2', x_l(year))
       .attr('y1', 40)
       .attr('y2', 330);
     
-    var box = document.getElementById("line-chart-box");
+    var box = document.getElementById("human-factor-box");
     left = box.getBoundingClientRect().left;
     top_ = box.getBoundingClientRect().top;
     //console.log(box.getBoundingClientRect().top);
@@ -266,18 +213,14 @@ function drawTooltip(event, data) {
       .selectAll()
       .data(data).enter()
       .append('div')
-      .style('color', d => colors(`${d[0].pollution}`))
+      .style('color', d => colorsRQ5(`${d[0].type}`))
       .html(function(d) {
-          if(d[0].pollution != "PM2.5 standard") {
-              pollution = d[0].pollution;
+              type = d[0].type;
               i = years.indexOf(year);
-              perc = d[i].percentage;
-              //console.log(typeof(perc));
-              perc = perc.substr(0,5);
-              text = pollution + ": " + perc;
+              perc = d[i].growth;
+              text = type + ": " + perc;
               //console.log(text);
               return text;
-          }
-      });
+          });
 
   }

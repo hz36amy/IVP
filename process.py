@@ -87,5 +87,38 @@ try:
 except PermissionError as e:
     print('Error:' + str(type(e)))
 
-print(standard['PM2.5'])
-print(standard['PM10'])
+# RQ5>> yearly data for human factors
+new_filename = 'human-factor.csv'
+cols_new_name = ['year','growth','type']
+df = pd.DataFrame(cols_new_name).T
+
+year = ['2013-01-01','2014-01-01','2015-01-01','2016-01-01']
+data = [
+    [6.9, 7.7, 2.2],
+    [5.7, 7.4, 1.7],
+    [-3.4, 6.9, 0.9],
+    [2.8, 6.9, 0.1]
+]
+
+new_rows = [
+    [year[0], data[0][0], 'Industrial'],
+    [year[1], data[1][0], 'Industrial'],
+    [year[2], data[2][0], 'Industrial'],
+    [year[3], data[3][0], 'Industrial'],
+    [year[0], data[0][1], 'GDP'],
+    [year[1], data[1][1], 'GDP'],
+    [year[2], data[2][1], 'GDP'],
+    [year[3], data[3][1], 'GDP'],
+    [year[0], data[0][2], 'Population'],
+    [year[1], data[1][2], 'Population'],
+    [year[2], data[2][2], 'Population'],
+    [year[3], data[3][2], 'Population'],
+]
+try:
+    df.to_csv(path + '/' + new_filename, encoding = 'gbk', header = False, index = False)
+    for r in new_rows:
+        r_data = pd.DataFrame(r).T
+        r_data.to_csv(path + '/' + new_filename, mode = 'a', encoding = 'gbk', header = False, index = False)
+    print('Finish')
+except PermissionError as e:
+    print('Error:' + str(type(e)))

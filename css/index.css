@@ -94,3 +94,8 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 0.5em;
 }
+
+#human-factor {
+    width: 60%;
+    margin: 0 auto;
+}
