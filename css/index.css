@@ -51,7 +51,7 @@ p {
 }
 
 #map {
-    width: 30%;
+    width: 40%;
     float: left;
 }
 #stacked-bar-chart {
@@ -69,7 +69,7 @@ p {
 }
 
 #RQ1 {
-    height: 800px;
+    height: 1200px;
 }
 
 #footer {

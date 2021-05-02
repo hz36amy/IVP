@@ -15,32 +15,99 @@
         <div id="RQ1">
             <p class="RQ-title" style="text-align: left;"> [Air Pollution]</p>
             <div id="RQ1-content" style="display:block">
-              <p>Air pollution is the presence of substances in the atmosphere that are harmful to the health of humans and other living beings, or cause damage to the climate or to materials. </p>
-              <p style="font-weight: bold;">Which season has the best air quality?
-                Which area is the most polluted?</p>
-              <p>Select the site and bars to explore more</p>
+              <p><b>Air pollution</b> is the presence of substances in the atmosphere that are harmful to the health of humans and other living beings, or cause damage to the climate or to materials. 
+            There are different types of pollutants, such as gases, particulates and biological molecules.
+            Different provinces in China have different items of pollutants included in calculating the 
+            air pollution index according to local situation and regulation. 
+            The following pollutants are mainly observed in Beijing: <b>PM2.5, PM10, 
+            SO2, NO2, CO and O3</b>.
+            Among them, PM2.5 and PM10 represent for fine particulate matter and inhalable particles.</p>
+            <p style="margin-bottom: 20px;">With the development of urbanization, air pollution has gradually endangered human health. 
+            The nation has also adopted controlling policies recent years. But are you really familiar with 
+            air pollution? I select the air-quality data from <b>12 nationally-controlled monitoring sites</b>
+            between 2013-03-01 to 2017-02-28. Hope you can learn more with this visualization.</p>
+              <p style="display:inline; font-size:large;"><b>Which season has the best air quality?
+                Which area is the most polluted?</b></p>
+              <p style="color:cadetblue; display: inline;">(Select the site and bars to explore more)</p>
               <div id="stacked-bar-chart"></div>
-              <div id="map"></div>
+              <div id="map"></div><div style="height: 480px;"></div>
+            <p>As you can see, the air quality of Beijing is significantly
+                better in summer than other seasons. This is because the temperature
+                and monsoon in summer is beneficial for the spread of pollutants.
+                However, one pollutants is distinct contray to the general trend.
+                If you click the bar chart or label of <b>O3</b>, you will see a 
+                zenith in summer. Continued high temperature and strong sunshine in 
+                Summer is conducive to atmospheric photochemical reaction of nitrogen oxides
+                and volatile organic compounds, thus generating strong oxidants such 
+                as near-ground ozone. Gaseous pollutants in the atmosphere may also 
+                generate secondary aerosols in this highly oxidized environment, which 
+                further aggravates PM2.5 pollution, showing the characteristics of combined 
+                surface <b>O3</b> and <b>PM2.5</b> pollution.
+            </p>
+            <p>
+                If you observe the map, you will find that there is also an obvious
+                differences in pollution levels among these sites. Why was that happen?
+                This is mainly because of the special surface of Beijing city, its surrounding
+                mountains makes the wind field easy to converge in the piedmont region, that is 
+                the south part of Beijing. Additionally, the north and west part of the city locates
+                at the upwind, where the pollutants are difficult to aggregate.
+            </p>
             </div>
         </div>
         <!-- <div id="RQ3"></div> -->
         <div id="RQ4">
             <p class="RQ-title" id="RQ4-title" onclick="test('RQ4-content')" style="text-align: left;"> [Trends]</p>
             <div id="RQ4-content" style="display:none">
-              <p>Does the air-quality of Beijing improves from 2013 to 2017?</p>
-              <p>............................................</p>
+              <p style="margin-bottom: 20px;">According to newspaper, Beijing began to restrict the use of vehicles
+                  and other related policies to control the worsening of air pollution.
+              </p>
+              <p style="display:inline; font-size:large;"><b>Does the air-quality of Beijing improves from 2013 to 2017?</b></p>
+              <p style="color:cadetblue; display: inline;">(Slide to see the tooltip)</p>
               <div id="line-chart"></div>
               <div id='tooltip'></div>
+              <!-- <div style="height: 480px;"></div> -->
+              <p>
+                  Based on the line chart, it is clearly to see a declining trend
+                  of <b>SO2</b> concentration. The particle
+                  pollutants <b>PM2.5</b>,<b>PM10</b> and <b>NO2</b> shows a slight increase
+                  in 2014 but decreased a lit bit after that. While except for that,
+                  <b>CO</b> and <b>O3</b> shows no obvious increase or decrease trend.
+              </p>
+              <p>
+                  Although some of the pollutants decreased between this period,
+                  we still need to pay more efforts together to improve the air
+                  quality of the city. Because the <b style="color: rgb(224, 0, 0);">national annual standard of PM2.5</b>
+                  (dashed line) is far below the current level.
+              </p>
+              <div style="height: 50px;"></div>
             </div>
             <!-- <button id="play">play</button> -->
         </div>
         <div id="RQ5">
             <p class="RQ-title" id="RQ5-title" onclick="test('RQ5-content')" style="text-align: left;"> [Human factor]</p>
             <div id="RQ5-content" style="display:none">
-              <p>How do human factor influences air quality?</p>
-              <p>............................................</p>
+              <p style="display:inline; font-size:large;"><b>What causes the trends? How do human factor influences air quality?</b></p>
+              <p style="color:cadetblue; display: inline;">(Slide to see the tooltip)</p>
               <div id="human-factor"></div>
               <div id="tooltip-RQ5"></div>
+              <p>
+                  It is clearly to observe a downward trend of <b style="color: rgb(224, 0, 0);">
+                    total industrial output value</b>, which actually corresponds to the 
+                    trend for SO2. Why was that? Most of the SO2 in the air comes from the 
+                    industrial production. As for <b style="color: rgb(0, 97, 224);">GDP</b>
+                    and <b style="color: rgb(0, 165, 69);">Population</b>, although they
+                    don't show rapid increase or decrease trend, they clearly match the 
+                    trend of air pollutants very well. In conclusion, human factor may 
+                    influence air quality to a large extent. So protecting the atmospheric 
+                    environment is the duty of every citizen.
+              </p>
+              <p style="color:cadetblue; text-align: center;">
+                [data from: 
+                <a href="http://tjj.beijing.gov.cn/tjsj_31433/" target="_blank">
+                    Beijing Municipal Bureau Statistics
+                </a>]
+              </p>
+              <div style="height: 50px;"></div>
             </div>
         </div>
         <div id="footer">
