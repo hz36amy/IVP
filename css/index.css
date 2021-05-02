@@ -14,14 +14,14 @@ body {
 }
 
 p {
-    width: 800px;
+    width: 1200px;
 }
 
 #RQ1 p, #RQ4 p, #RQ5 p, #footer p {
-    text-align: center;
+    text-align: left;
     line-height: 20px;
+    padding-left: 50px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    margin: 0 auto;
     padding-top: 40px;
 }
 
@@ -62,10 +62,14 @@ p {
 }
 #RQ1, #RQ2, #RQ3, #RQ4, #RQ5 {
     margin: 0 auto;
-    height: 1000px;
     width: 1300px;
     background-color:rgba(255, 255, 255, 1);
     margin-bottom: 50px;
+    border-radius: 30px;
+}
+
+#RQ1 {
+    height: 800px;
 }
 
 #footer {
@@ -90,7 +94,7 @@ p {
     stroke-dasharray: 5,5;
 }
 
-#tooltip {
+#tooltip, #tooltip-RQ5 {
     position:fixed;
     background-color:rgb(255, 255, 255);
     padding:5px;
@@ -108,8 +112,16 @@ p {
 
 #footer {
     height: 120px;
+    margin: 0 auto;
     margin-top: 100px;
     color:rgb(255, 255, 255);
+}
+
+#footer p {
+    margin: 0 auto;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    text-align: center;
 }
 
 a {
@@ -118,10 +130,13 @@ a {
 
 .RQ-title {
     font-size: 3em;
-    height: 70px;
+    height: 68px;
     float: left;
-    width: 1260px;
-    padding-left: 40px;
+    width: 1250px;
     background-color: rgba(37, 189, 118, 0.753);
     color:rgb(255, 255, 255);
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    margin-bottom: 40px;
 }
+

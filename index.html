@@ -14,27 +14,34 @@
         </div>
         <div id="RQ1">
             <p class="RQ-title" style="text-align: left;"> [Air Pollution]</p>
-            <p>Air pollution is the presence of substances in the atmosphere that are harmful to the health of humans and other living beings, or cause damage to the climate or to materials. </p>
-            <p>Which season has the best air quality?</p>
-            <p>Which area is the most polluted?</p>
-            <p>...................................</p>
-            <div id="stacked-bar-chart"></div>
-            <div id="map"></div>
+            <div id="RQ1-content" style="display:block">
+              <p>Air pollution is the presence of substances in the atmosphere that are harmful to the health of humans and other living beings, or cause damage to the climate or to materials. </p>
+              <p style="font-weight: bold;">Which season has the best air quality?
+                Which area is the most polluted?</p>
+              <p>Select the site and bars to explore more</p>
+              <div id="stacked-bar-chart"></div>
+              <div id="map"></div>
+            </div>
         </div>
         <!-- <div id="RQ3"></div> -->
         <div id="RQ4">
-            <p class="RQ-title" style="text-align: left;"> [Trends]</p>
-            <p>Does the air-quality of Beijing improves from 2013 to 2017?</p>
-            <p>............................................</p>
-            <div id="line-chart"></div>
-            <div id='tooltip'></div>
+            <p class="RQ-title" id="RQ4-title" onclick="test('RQ4-content')" style="text-align: left;"> [Trends]</p>
+            <div id="RQ4-content" style="display:none">
+              <p>Does the air-quality of Beijing improves from 2013 to 2017?</p>
+              <p>............................................</p>
+              <div id="line-chart"></div>
+              <div id='tooltip'></div>
+            </div>
             <!-- <button id="play">play</button> -->
         </div>
         <div id="RQ5">
-            <p class="RQ-title" style="text-align: left;"> [Human factor]</p>
-            <p>How do human factor influences air quality?</p>
-            <p>............................................</p>
-            <div id="human-factor"></div>
+            <p class="RQ-title" id="RQ5-title" onclick="test('RQ5-content')" style="text-align: left;"> [Human factor]</p>
+            <div id="RQ5-content" style="display:none">
+              <p>How do human factor influences air quality?</p>
+              <p>............................................</p>
+              <div id="human-factor"></div>
+              <div id="tooltip-RQ5"></div>
+            </div>
         </div>
         <div id="footer">
             <p> - Thanks for watching - <br>
@@ -44,5 +51,6 @@
         <script src="index.js"></script>
         <script src="line-chart.js"></script>
         <script src="human-factor.js"></script>
+        <script src="control.js"></script>
     </body>
 </html>

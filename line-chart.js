@@ -106,7 +106,7 @@ function initialize_line(params) {
           }
       })
       .attr('d', line)
-      .call(transition)
+      .call(d => transition(d, "RQ4-content"))
       .style('stroke-width',2)
       .style('stroke', d => colors(`${d[0].pollution}`))
       .style('fill', 'none')
@@ -223,11 +223,14 @@ function hover(svg, path) {
 
 }
 
-function transition(path) {
-    path.transition()
+function transition(path, content) {
+    thisDiv = document.getElementById(content);
+    if(thisDiv.style.display == "block") {
+        path.transition()
         .duration(10000)
         .attrTween("stroke-dasharray", tweenDash)
         .on("end", ()=>{d3.select(this).call(transition)});
+    } 
 }
 
 function tweenDash() {
@@ -240,6 +243,7 @@ function removeTooltip() {
 
     if (tooltip) tooltip.style('display', 'none');
     if (tooltipLine) tooltipLine.attr('stroke', 'none');
+    if (tooltipRQ5) tooltipRQ5.style('display', 'none');
     if (tooltipLineRQ5) tooltipLineRQ5.attr('stroke', 'none');
   }
   

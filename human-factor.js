@@ -1,5 +1,6 @@
 console.log("Connect success!")
 
+const tooltipRQ5 = d3.select('#tooltip-RQ5');
 // data
 data = d3.csv("data/PRSA_Data_20130301-20170228/human-factor.csv").then(d => RQ5(d));
 
@@ -101,7 +102,7 @@ function initialize_RQ5(params) {
       .data(dataRQ5)
       .join('path')
       .attr('d', line)
-      .call(transition)
+      .call(d => transition(d, "RQ5-content"))
       .style('stroke-width',2)
       .style('stroke', d => colorsRQ5(`${d[0].type}`))
       .style('fill', 'none')
@@ -207,7 +208,7 @@ function drawTooltipRQ5(event, data) {
     top_ = box.getBoundingClientRect().top;
     //console.log(box.getBoundingClientRect().top);
     
-    tooltip.html(year)
+    tooltipRQ5.html(year)
       .style('display', 'block')
       .style('left', x_ + left +'px')
       .style('top', y_ + top_ +'px')
