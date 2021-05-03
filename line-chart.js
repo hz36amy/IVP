@@ -8,7 +8,8 @@ var colors;
 
 const tooltip = d3.select('#tooltip');
 // data
-data = d3.csv("data/PRSA_Data_20130301-20170228/air-quality-overall.csv").then(d => drawLines(d));
+var dataRQ4;
+// data = d3.csv("data/PRSA_Data_20130301-20170228/air-quality-overall.csv").then(d => drawLines(d));
 
 // draw line chart
 function drawLines(csv) {
@@ -23,10 +24,7 @@ function drawLines(csv) {
               .attr("id", "line-chart-box");
   
     var canvas = {svg: svgLine, margin: margin, width: width, height: height};
-  
-    //var params = {'input': input, 'canvas': canvas};
-    // params.input = input;
-    // params.canvas = canvas;
+
   
     var params1 = {'input': input, 'canvas': canvas};
     initialize_line(params1);
@@ -224,13 +222,10 @@ function hover(svg, path) {
 }
 
 function transition(path, content) {
-    thisDiv = document.getElementById(content);
-    if(thisDiv.style.display == "block") {
-        path.transition()
+    path.transition()
         .duration(10000)
         .attrTween("stroke-dasharray", tweenDash)
         .on("end", ()=>{d3.select(this).call(transition)});
-    } 
 }
 
 function tweenDash() {

@@ -5,8 +5,14 @@ function test(obj) {
     } else {
         if(obj == 'RQ5-content') {
             document.getElementById("RQ5").style.marginTop = "200px";
+            if(!dataRQ5) {
+                dataRQ5 = d3.csv("data/PRSA_Data_20130301-20170228/human-factor.csv").then(d => RQ5(d));
+            }
         } else if (obj == 'RQ4-content') {
             document.getElementById("RQ5").style.marginTop = "0";
+            if(!dataRQ4) {
+                dataRQ4 = d3.csv("data/PRSA_Data_20130301-20170228/air-quality-overall.csv").then(d => drawLines(d));
+            }
         }
         div1.style.display = "block";
     }

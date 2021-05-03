@@ -2,7 +2,8 @@ console.log("Connect success!")
 
 const tooltipRQ5 = d3.select('#tooltip-RQ5');
 // data
-data = d3.csv("data/PRSA_Data_20130301-20170228/human-factor.csv").then(d => RQ5(d));
+var dataRQ5;
+// data = d3.csv("data/PRSA_Data_20130301-20170228/human-factor.csv").then(d => RQ5(d));
 
 // draw line chart RQ5
 function RQ5(csv) {
@@ -17,10 +18,6 @@ function RQ5(csv) {
               .attr("id", "human-factor-box");
   
     var canvas = {svg: svgLineRQ5, margin: margin, width: width, height: height};
-  
-    //var params = {'input': input, 'canvas': canvas};
-    // params.input = input;
-    // params.canvas = canvas;
   
     var params1 = {'input': input, 'canvas': canvas};
     initialize_RQ5(params1);

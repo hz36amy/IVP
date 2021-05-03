@@ -204,9 +204,9 @@ function initialize(params) {
 
   formatValue = x => isNaN(x) ? "N/A" : x.toLocaleString("en")
 
-  yAxis = g => g
+  yAxis0 = g => g
     .attr("transform", `translate(${margin.left},0)`)
-    .call(d3.axisLeft(y).ticks(null, "s"))
+    .call(d3.axisLeft(y0).ticks(null, "s"))
     .call(g => g.selectAll(".domain").remove())
 
   xAxis = g => g
@@ -229,7 +229,7 @@ function initialize(params) {
   params.heights = setUpHeights(clusterNames, new_csv);
 
 
-  y = params.y = d3.scaleLinear()
+  y0 = params.y = d3.scaleLinear()
     .domain([0, d3.max(series, d => d3.max(d, d => d[1]))])
     .rangeRound([height - margin.bottom, margin.top])
 
@@ -256,8 +256,8 @@ function initialize(params) {
     .data(d => d)
     .join("rect")
       .attr("x", (d, i) => x(d.data.month))
-      .attr("y", d => y(d[1]))
-      .attr("height", d => y(d[0]) - y(d[1]))
+      .attr("y", d => y0(d[1]))
+      .attr("height", d => y0(d[0]) - y0(d[1]))
       .attr("width", x.bandwidth())
       .on('click', function(d, i){
         chosen.cluster = chosen.cluster === i.key ? null : i.key;
@@ -272,7 +272,7 @@ ${formatValue(d.data[d.key])}`);
 
   svg.append("g")
       .attr('class', 'axisY')
-      .call(yAxis);
+      .call(yAxis0);
 
   svg.append("text")
      .attr("transform", `translate(${width-margin.right},${height-margin.bottom+5})`)
@@ -367,7 +367,7 @@ function update(params) {
   svg.selectAll('.axisY')
         .transition()
         .duration(transDuration)
-        .call(yAxis);
+        .call(yAxis0);
  
   // update legend
   legend.selectAll('rect')

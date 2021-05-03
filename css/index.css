@@ -35,7 +35,7 @@ p {
 }
 #title {
     font-size: 4em;
-    font-family:fantasy;
+    font-family: Copperplate, fantasy;
     color: white;
     text-shadow: 0px 0px 30px rgb(30 28 28 / 60%);
     line-height: 100px;
